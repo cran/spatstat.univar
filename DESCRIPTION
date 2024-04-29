@@ -1,6 +1,6 @@
 Package: spatstat.univar
-Version: 2.0-2
-Date: 2024-04-16
+Version: 2.0-3
+Date: 2024-04-21
 Title: One-Dimensional Probability Distribution Support for the
         'spatstat' Family
 Authors@R: c(person("Adrian", "Baddeley", 
@@ -38,7 +38,7 @@ URL: http://spatstat.org/
 NeedsCompilation: yes
 ByteCompile: true
 BugReports: https://github.com/spatstat/spatstat.univar/issues
-Packaged: 2024-04-16 03:01:54 UTC; adrian
+Packaged: 2024-04-22 03:14:12 UTC; adrian
 Author: Adrian Baddeley [aut, cre, cph]
     (<https://orcid.org/0000-0001-9499-8382>),
   Tilman M. Davies [aut, ctb, cph]
@@ -49,4 +49,4 @@ Author: Adrian Baddeley [aut, cre, cph]
   Rolf Turner [aut, cph] (<https://orcid.org/0000-0001-5521-5218>),
   Greg McSwiggan [ctb, cph]
 Repository: CRAN
-Date/Publication: 2024-04-16 14:50:05 UTC
+Date/Publication: 2024-04-29 08:40:02 UTC
