@@ -1,7 +1,7 @@
 #
 #     ewcdf.R
 #
-#     $Revision: 1.27 $  $Date: 2023/01/15 02:56:05 $
+#     $Revision: 1.29 $  $Date: 2024/07/01 07:29:45 $
 #
 #  With contributions from Kevin Ummel
 #
@@ -98,8 +98,9 @@ print.ewcdf <- function (x, digits = getOption("digits") - 2L, ...) {
 quantile.ewcdf <- function(x, probs=seq(0,1,0.25), names=TRUE, ...,
                            normalise=TRUE, type=1) {
   trap.extra.arguments(..., .Context="quantile.ewcdf")
-  if(!(type %in% c(1,2)))
-    stop("Only quantiles of type 1 and 2 are implemented", call.=FALSE)
+  if(is.na(m <- match(type, c(1,2,4))))
+    stop("Argument 'type' must equal 1, 2 or 4", call.=FALSE)
+  type <- as.character(c(1,2,4)[m])
   env <- environment(x)
   xx <- get("x", envir=env)
   n <- length(xx)
@@ -126,17 +127,24 @@ quantile.ewcdf <- function(x, probs=seq(0,1,0.25), names=TRUE, ...,
   np <- length(probs)
   if (n > 0 && np > 0) {
     qs <- numeric(np)
-    if(type == 1) {
-      ## right-continuous inverse
-      for(k in 1:np) qs[k] <- xx[min(which(Fxx >= probs[k]))]
-    } else {
-      ## average of left and right continuous
-      for(k in 1:np) {
-        pk <- probs[k]
-        ik <- min(which(Fxx >= probs[k]))
-        qs[k] <- if(Fxx[ik] > pk) (xx[ik] + xx[ik-1L])/2 else xx[ik]
-      }
-    }
+    switch(type,
+           "1" = {
+             ## right-continuous inverse
+             for(k in 1:np) qs[k] <- xx[min(which(Fxx >= probs[k]))]
+           },
+           "2" = {
+             ## average of left and right continuous
+             for(k in 1:np) {
+               pk <- probs[k]
+               ik <- min(which(Fxx >= probs[k]))
+               qs[k] <- if(Fxx[ik] > pk) (xx[ik] + xx[ik-1L])/2 else xx[ik]
+             }
+           },
+           "4" = {
+             ## linear interpolation
+             qs[] <- approx(Fxx, xx, xout=probs, method="linear", 
+                            ties="ordered", rule=2)$y
+           })
   } else {
     qs <- rep(NA_real_, np)
   }
@@ -176,6 +184,10 @@ mean.ecdf <- mean.ewcdf <- function(x, trim=0, ...) {
   sum(xx * dF)/sum(dF)
 }
 
+knots.ecdf <- knots.ewcdf <- function(Fn, ...) {
+  eval(expression(x), envir=environment(Fn))
+}
+
 quantilefun <- function(x, ...) {
   UseMethod("quantilefun")
 }
@@ -183,20 +195,39 @@ quantilefun <- function(x, ...) {
 quantilefun.ewcdf <- quantilefun.ecdf <- quantilefun.interpolatedCDF <- function(x, ..., type=1) {
   ## inverse CDF
   trap.extra.arguments(..., .Context="quantilefun")
-  if(!(type %in% c(1,2)))
-    stop("Only quantiles of type 1 and 2 are implemented", call.=FALSE)
+  if(is.na(m <- match(type, c(1,2,4))))
+    stop("Argument 'type' must equal 1, 2 or 4", call.=FALSE)
+  type <- c(1,2,4)[m]
   env <- environment(x)
-  qq <- get("x", envir=env)
-  pp <- get("y", envir=env)
+  qq <- get("x", envir = env)
+  pp <- get("y", envir = env)
   ok <- !duplicated(pp)
   qq <- qq[ok]
   pp <- pp[ok]
-  if(length(pp) == 1) {
-    pp <- c(0,pp)
+  if (length(pp) == 1) {
+    pp <- c(0, pp)
     qq <- rep(qq, 2)
-  } 
-  f <- switch(type, 0, 1/2)
-  xinverse <- approxfun(pp, qq, f=f, rule=2)
-  return(xinverse)
+  }
+  #'
+  n <- length(pp)
+  result <- switch(as.character(type),
+                   "1" = {
+                     approxfun(pp, qq, method="constant", f=1,
+                               ties="ordered", rule=2)
+                   },
+                   "2" = {
+                     function(p) {
+                       j <- approx(pp, 1:n, xout=p, method="constant", f=0,
+                                   ties="ordered", rule=2)$y
+                       j <- as.integer(j)
+                       g <- p - pp[j]
+                       jplus1 <- pmin(j+1, n)
+                       z <- ifelse(g == 0, (qq[j]+qq[jplus1])/2, qq[jplus1])
+                       return(z)
+                     }
+                   },
+                   "4" = approxfun(pp, qq, method="linear", 
+                                   ties="ordered", rule=2))
+  return(result)
 }
 
