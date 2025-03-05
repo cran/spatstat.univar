@@ -1,9 +1,9 @@
-537e591ccc9e67a96841e61443b5216c *DESCRIPTION
+e8c3652f55a83db019fe8a31f29bfff0 *DESCRIPTION
 4654f10f66d4e5cbaaa8edc1b7ab5e7c *NAMESPACE
-d9ed7caf1d87828d922e7fc0fa863c00 *NEWS
+3eff1dcd23f3eb2f045f35ce8d644e48 *NEWS
 fca2044707f32b4cea5dcf4dac99d190 *R/First.R
 4c02ad69a7cfd1f314d4571831ea3419 *R/access.R
-1537aabd80446e3783f223751ba34fae *R/adaptive.R
+3134f9d86064217840342b7b175bf423 *R/adaptive.R
 8e3c0887993042516dd36109ea4b7442 *R/breakpts.R
 a11d9192b621d300f00e62c64ee0a931 *R/bw.abram.default.R
 fac8f031392b779db0ef140feadb7b67 *R/bw.pow.R
@@ -25,8 +25,8 @@ d961cac123a451f4072ca5510f44ae26 *R/transformquantiles.R
 079229523448ad874688ed31c6109ffb *R/util.R
 9364ac0cfd68b3758689bab8ba27c2d1 *R/weightedStats.R
 f2d49fc8f50fef7f76bcb3fc7f34efb4 *inst/CITATION
-13762f6032206e2a3e170ec53e772ce4 *inst/doc/packagesizes.txt
-13762f6032206e2a3e170ec53e772ce4 *inst/info/packagesizes.txt
+afe624f405adc1b88e2df698ecd8732f *inst/doc/packagesizes.txt
+afe624f405adc1b88e2df698ecd8732f *inst/info/packagesizes.txt
 1d8d9afeacbb8e67e56abf455ebfe6d6 *man/CDF.Rd
 f4e762cf6897ace428262067e7460ef0 *man/bw.abram.Rd
 3cff38a4ff88379e553290114674998c *man/bw.abram.default.Rd
@@ -34,7 +34,7 @@ e49df85cf50d5a4e7d7f1ef7b1d1d0d4 *man/bw.pow.Rd
 d732088eaafb68ee6f050e83b1f05dba *man/bw.taylor.Rd
 31c5655269374d65bdabc99bbcaf5187 *man/densityAdaptiveKernel.Rd
 87a17181bb1ee98d4f6284e99c380334 *man/densityAdaptiveKernel.default.Rd
-d223ed7e74fd155cffe5d5ceda3163d9 *man/densityBC.Rd
+1d42ddab648b340a048727233558aa1f *man/densityBC.Rd
 4095a77f5095c63ca099f9ad4f565140 *man/dkernel.Rd
 e4e6fd59a406e7079fb3cb63a6815491 *man/dkernelBC.Rd
 ebff14c1534380f970f2856287bc14a4 *man/ewcdf.Rd
@@ -50,7 +50,7 @@ b57614afc259fd51b751070f1fdc7f77 *man/kernel.factor.Rd
 1efcd196df498043d360a07bacdda65e *man/km.rs.Rd
 017d863ee0efcf516f97b2d84d45ad0c *man/knots.ewcdf.Rd
 1ac6f0faf463fc5c6d189b778ea36fc3 *man/macros/defns.Rd
-0cb664517b740e12f4c4281f8034c0d9 *man/macros/newdefns.Rd
+2d085eefe9af82314a7bd5c8e4255e5e *man/macros/newdefns.Rd
 db978fdddd2b67ced9a96132524e5d7b *man/mean.ewcdf.Rd
 e08ae36e41d428379476c17573706076 *man/quantile.density.Rd
 544025e499afd9324c96344dad247727 *man/quantile.ewcdf.Rd
