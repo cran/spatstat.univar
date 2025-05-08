@@ -1,6 +1,6 @@
-e8c3652f55a83db019fe8a31f29bfff0 *DESCRIPTION
-4654f10f66d4e5cbaaa8edc1b7ab5e7c *NAMESPACE
-3eff1dcd23f3eb2f045f35ce8d644e48 *NEWS
+91726ab585fcd50a79a0a963bba50103 *DESCRIPTION
+e4a0f3d5f73aaa7a9c05d28bd7b59d2b *NAMESPACE
+4a8e2a4f143ff63df5b800eddc7100d9 *NEWS
 fca2044707f32b4cea5dcf4dac99d190 *R/First.R
 4c02ad69a7cfd1f314d4571831ea3419 *R/access.R
 3134f9d86064217840342b7b175bf423 *R/adaptive.R
@@ -16,7 +16,7 @@ b9d86a3f84aa7b91f8cbb262c1790f2b *R/hotrod.R
 6e9eb85f76ced673abc1aa0d4bfae322 *R/kernels.R
 75e0ab745be4574175ce89c736a6ac71 *R/kernelsBC.R
 a1f38d938fa2e6bacbd490aa5047a880 *R/kmrs.R
-4d8e1d1049bafb10ca8117a29a20f1ab *R/quantiledensity.R
+1913298e2d18dacdcf09379b8b3774fa *R/quantiledensity.R
 442a508e7ecff8ce3f9d063d5fcc831a *R/rounding.R
 85a46e7c7901b18a9916e43599d55807 *R/stieltjes.R
 d961cac123a451f4072ca5510f44ae26 *R/transformquantiles.R
@@ -25,8 +25,8 @@ d961cac123a451f4072ca5510f44ae26 *R/transformquantiles.R
 079229523448ad874688ed31c6109ffb *R/util.R
 9364ac0cfd68b3758689bab8ba27c2d1 *R/weightedStats.R
 f2d49fc8f50fef7f76bcb3fc7f34efb4 *inst/CITATION
-afe624f405adc1b88e2df698ecd8732f *inst/doc/packagesizes.txt
-afe624f405adc1b88e2df698ecd8732f *inst/info/packagesizes.txt
+a6cd7b87adb0e66fa80bfe860ded4320 *inst/doc/packagesizes.txt
+a6cd7b87adb0e66fa80bfe860ded4320 *inst/info/packagesizes.txt
 1d8d9afeacbb8e67e56abf455ebfe6d6 *man/CDF.Rd
 f4e762cf6897ace428262067e7460ef0 *man/bw.abram.Rd
 3cff38a4ff88379e553290114674998c *man/bw.abram.default.Rd
@@ -49,7 +49,7 @@ b57614afc259fd51b751070f1fdc7f77 *man/kernel.factor.Rd
 88771048d25787afbdc8f2c0cc79d7b2 *man/kernel.squint.Rd
 1efcd196df498043d360a07bacdda65e *man/km.rs.Rd
 017d863ee0efcf516f97b2d84d45ad0c *man/knots.ewcdf.Rd
-1ac6f0faf463fc5c6d189b778ea36fc3 *man/macros/defns.Rd
+86394a54d161a4823e3defc3a7180c9d *man/macros/defns.Rd
 2d085eefe9af82314a7bd5c8e4255e5e *man/macros/newdefns.Rd
 db978fdddd2b67ced9a96132524e5d7b *man/mean.ewcdf.Rd
 e08ae36e41d428379476c17573706076 *man/quantile.density.Rd
@@ -57,7 +57,7 @@ e08ae36e41d428379476c17573706076 *man/quantile.density.Rd
 78bd0135c9f0b56b8a16b181c3b6f264 *man/quantilefun.Rd
 396ba365547cdcad60faa9d6210ece8c *man/reduced.sample.Rd
 19d3634f640b51ec593bedc47a7b1c09 *man/rounding.Rd
-619e9ed55c1055b3ecfa1183b2459f8f *man/spatstat.univar-internal.Rd
+5ce74a19ad4d4f607ff0eff2e82f981f *man/spatstat.univar-internal.Rd
 257b7a646eddf47fb692765c614fb4b0 *man/spatstat.univar-package.Rd
 0699d730be5b69939ebe777cae5e8870 *man/stieltjes.Rd
 542e716e9844587fb821ded945a62b2c *man/transformquantiles.Rd
