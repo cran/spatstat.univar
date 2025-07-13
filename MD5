@@ -1,6 +1,6 @@
-91726ab585fcd50a79a0a963bba50103 *DESCRIPTION
+d3b41335019d0f1217c6b8a8a85e064e *DESCRIPTION
 e4a0f3d5f73aaa7a9c05d28bd7b59d2b *NAMESPACE
-4a8e2a4f143ff63df5b800eddc7100d9 *NEWS
+e558ec6b7a0b38b2eda0d3bdab504b8e *NEWS
 fca2044707f32b4cea5dcf4dac99d190 *R/First.R
 4c02ad69a7cfd1f314d4571831ea3419 *R/access.R
 3134f9d86064217840342b7b175bf423 *R/adaptive.R
@@ -23,10 +23,10 @@ d961cac123a451f4072ca5510f44ae26 *R/transformquantiles.R
 51cab9a67d249b47f86e29e19e997a0c *R/uniquemap.R
 3bf7a5203c177defc01b450a50e16c2b *R/unnormdensity.R
 079229523448ad874688ed31c6109ffb *R/util.R
-9364ac0cfd68b3758689bab8ba27c2d1 *R/weightedStats.R
+e17917eea56834431483616513368206 *R/weightedStats.R
 f2d49fc8f50fef7f76bcb3fc7f34efb4 *inst/CITATION
-a6cd7b87adb0e66fa80bfe860ded4320 *inst/doc/packagesizes.txt
-a6cd7b87adb0e66fa80bfe860ded4320 *inst/info/packagesizes.txt
+69b1aa2927d7e7339566301e4eef9612 *inst/doc/packagesizes.txt
+69b1aa2927d7e7339566301e4eef9612 *inst/info/packagesizes.txt
 1d8d9afeacbb8e67e56abf455ebfe6d6 *man/CDF.Rd
 f4e762cf6897ace428262067e7460ef0 *man/bw.abram.Rd
 3cff38a4ff88379e553290114674998c *man/bw.abram.default.Rd
@@ -49,7 +49,7 @@ b57614afc259fd51b751070f1fdc7f77 *man/kernel.factor.Rd
 88771048d25787afbdc8f2c0cc79d7b2 *man/kernel.squint.Rd
 1efcd196df498043d360a07bacdda65e *man/km.rs.Rd
 017d863ee0efcf516f97b2d84d45ad0c *man/knots.ewcdf.Rd
-86394a54d161a4823e3defc3a7180c9d *man/macros/defns.Rd
+c61de57ca5e2bb0ace233ab12460bd31 *man/macros/defns.Rd
 2d085eefe9af82314a7bd5c8e4255e5e *man/macros/newdefns.Rd
 db978fdddd2b67ced9a96132524e5d7b *man/mean.ewcdf.Rd
 e08ae36e41d428379476c17573706076 *man/quantile.density.Rd
@@ -63,7 +63,7 @@ e08ae36e41d428379476c17573706076 *man/quantile.density.Rd
 542e716e9844587fb821ded945a62b2c *man/transformquantiles.Rd
 34f601fc0d654accc092190f934f15dc *man/uniquemap.default.Rd
 9a699e1147d504b8034fbaaf6c2ed953 *man/unnormdensity.Rd
-228ee2e515f68954d8d16d86e0bb99cb *man/weighted.median.Rd
+7f3ec702b9f2a5cb2ead693e6c2d1a64 *man/weighted.median.Rd
 3ebc017766e6e659391ffceed16291e5 *man/whist.Rd
 6a67503592d550e973129ce76262d3b7 *src/access.c
 36b33a63d08370590d80b54258a5d896 *src/adaptive.c
@@ -81,4 +81,4 @@ e9e957f574cf730523f36199b22b4857 *src/kernels.c
 d78a4636fbaa6f0262a6553d712137e7 *src/tabnum.c
 4366dd120efa21df01119686e59b7551 *src/taylorboot.c
 d43888baaecd5e2a8d25bc8bae058fb0 *src/whist.c
-5b922aece5ddcd39a4cf74648749e1b2 *tests/all.R
+80ddb4959602de96d938131a9cdde1f1 *tests/all.R
