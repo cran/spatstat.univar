@@ -1,7 +1,7 @@
 #
 #  unnormdensity.R
 #
-#  $Revision: 1.19 $  $Date: 2023/08/14 06:27:35 $
+#  $Revision: 1.22 $  $Date: 2025/11/14 05:01:47 $
 #
 
 unnormdensity <- local({
@@ -112,7 +112,11 @@ unnormdensity <- local({
         out$y <- outpos$y - outneg$y
       }
     }
+    ## add smoothing parameters and call
     out$call <- match.call()
+    a <- list(...)
+    out$kernel <- match.kernel(
+                  (a$kernel %orifnull% a$window) %orifnull% "gaussian")
     return(out)
   }
 
