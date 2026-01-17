@@ -1,3 +1,17 @@
+        CHANGES IN spatstat.univar VERSION 3.1-6
+
+OVERVIEW
+
+    o Minor improvements.
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o uniquemap
+    Handles larger objects.
+    
+    o unnormdensity
+    Argument 'bw' may be NULL (treated as equivalent to 'bw' being missing).
+
         CHANGES IN spatstat.univar VERSION 3.1-5
 
 OVERVIEW
