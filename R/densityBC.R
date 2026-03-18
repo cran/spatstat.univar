@@ -4,9 +4,10 @@
 #'
 #'  Kernel smoothing with boundary correction at zero
 #'
-#' Copyright (c) 2024 Adrian Baddeley, Tilman Davies and Martin Hazelton
+#' Copyright (c) 2024-2026 Adrian Baddeley, Tilman Davies and Martin Hazelton
 #' GNU Public Licence (>= 2.0)
-#' 
+#'
+#' $Revision: 1.3 $ $Date: 2026/02/16 09:06:44 $
 
 densityBC <- function(x, kernel="epanechnikov", bw=NULL, 
                     ...,
@@ -16,7 +17,7 @@ densityBC <- function(x, kernel="epanechnikov", bw=NULL,
                     from=0, to=max(x), n=256,
                     zerocor=c("none", "weighted", "convolution",
                               "reflection", "bdrykern", "JonesFoster"),
-                    fast=FALSE, internal=list()) {
+                    fast=FALSE, xout=NULL, internal=list()) {
 
   xname <- short.deparse(substitute(x))
   trap.extra.arguments(..., .Context="In densityBC()")
@@ -33,13 +34,13 @@ densityBC <- function(x, kernel="epanechnikov", bw=NULL,
     splat("\t\trange(x) = ", prange(range(x)))
     started <- proc.time()
   }
-  
 
   ## ...........   validate arguments  ..............................
 
   x <- as.vector(x)
   stopifnot(is.numeric(x))
   nx <- length(x)
+  xrange <- range(x)
 
   stopifnot(is.numeric(weights))
   if(length(weights) == 1) {
@@ -51,16 +52,33 @@ densityBC <- function(x, kernel="epanechnikov", bw=NULL,
     stopifnot(adjust > 0)
   }
 
-  if(is.null(from)) from <- min(0, x)
-  if(is.null(to)) to <- max(0, x)
-  
-  stopifnot(is.numeric(from) && length(from) == 1)
-  stopifnot(is.numeric(to) && length(to) == 1)
-  stopifnot(from < to)
-  stopifnot(is.numeric(n) && length(n) == 1)
-  stopifnot(n >= 2)
-  nr <- as.integer(n)
+  ## ............... sequence of x values for evaluation ............
 
+  if(!is.null(xout)) {
+    ## arbitrary sequence
+    r <- as.numeric(xout)
+    nr <- length(r)
+    rrange <- range(r)
+    even <- isTRUE(internal$even %orifnull% evenly.spaced(r))
+  } else {
+    ## equally spaced
+    if(is.null(from)) from <- min(0, x)
+    if(is.null(to)) to <- max(0, x)
+  
+    stopifnot(is.numeric(from) && length(from) == 1)
+    stopifnot(is.numeric(to) && length(to) == 1)
+    stopifnot(from < to)
+    stopifnot(is.numeric(n) && length(n) == 1)
+    stopifnot(n >= 2)
+    nr <- as.integer(n)
+
+    even <- TRUE
+    rrange <- c(from, to)
+    r <- seq(from, to, length.out=nr)
+  }
+
+  ## 'fast' means 'use the FFT'
+  fast <- isTRUE(fast) && even
   
   ## ............... determine bandwidth ...........................
 
@@ -114,8 +132,6 @@ densityBC <- function(x, kernel="epanechnikov", bw=NULL,
   bw <- bw * adjust
 
   ## .............. initialise function table ......................
-  r <- seq(from, to, length.out=nr)
-  
   if(nx == 0) {
     f <- rep(0, nr)
     result <- list(x=r, y=f, bw=bw,
@@ -128,13 +144,15 @@ densityBC <- function(x, kernel="epanechnikov", bw=NULL,
 
   if(zerocor == "JonesFoster") {
     estconv <- densityBC(x, kernel=kernel, bw=bw, weights = weights,
-                       from=from, to=to, n=n,
-                       internal=list(addcall=FALSE),
-                       zerocor="convolution")
+                         from=from, to=to, n=nr, 
+                         fast=fast, xout=xout, 
+                         internal=list(addcall=FALSE),
+                         zerocor="convolution")
     estbdry <- densityBC(x, kernel=kernel, bw=bw, weights = weights,
-                       from=from, to=to, n=n,
-                       internal=list(addcall=FALSE),
-                       zerocor="bdrykern")
+                         from=from, to=to, n=nr,
+                         fast=fast, xout=xout, 
+                         internal=list(addcall=FALSE),
+                         zerocor="bdrykern")
     result <- estconv
     ecy <- estconv$y
     eby <- estbdry$y
@@ -155,23 +173,25 @@ densityBC <- function(x, kernel="epanechnikov", bw=NULL,
   xscal <- x/h
   rscal <- r/h
 
+  xscalrange <- xrange/h
+  rscalrange <- rrange/h
+
   ## ......... rejig the data to implement boundary correction at r = 0 .....
 
   if(zerocor != "none") {
-    if(any(x < 0))
+    if(xrange[1L] < 0)
       stop("negative x values are illegal when boundary correction selected")
 
     ## threshold is halfwidth of support of kernel
     thresh <- if(ker == "gaussian") 3 else 1
 
     if(zerocor=="weighted") {
-      # identify x[i] whose kernels need renormalising
-      x.is.small <- (xscal <= thresh)
-      # divide weights[i] by right tail of kernel 
-      if(any(x.is.small)) {
+      ## identify x[i] whose kernels need renormalising
+      if(xscalrange[1L] <= thresh) {
+        x.is.small <- (xscal <= thresh)
+        ## divide weight[i] by right tail of kernel 
         mass <- pkernel(-xscal[x.is.small], ker, sd=1/cker, lower.tail=FALSE)
-        weights[x.is.small] <- ifelse(weights[x.is.small] <= 0, 0,
-                                      weights[x.is.small] / mass)
+        weights[x.is.small] <- pmax(0, weights[x.is.small]/mass)
       }
     }
 
@@ -205,11 +225,11 @@ densityBC <- function(x, kernel="epanechnikov", bw=NULL,
 
     if(zerocor != "bdrykern") {
       d <- unnormdensity(xscal, weights=weights,
-                         from=rscal[1], to=rscal[nr], n=nr,
+                         from=rscalrange[1L], to=rscalrange[2L], n=nr,
                          kernel=kernel, bw=1/cker)
     } else {
       d <- unnormdensity(xlarge, weights=wlarge,
-                         from=rscal[1], to=rscal[nr], n=nr,
+                         from=rscalrange[1L], to=rscalrange[2L], n=nr,
                          kernel=kernel, bw=1/cker)
     } 
     ffast <- d$y
@@ -228,20 +248,9 @@ densityBC <- function(x, kernel="epanechnikov", bw=NULL,
                        0)
     if(zerocor != "bdrykern") {
       ## standard fixed bandwidth kernel estimate with appropriately rigged data
-      res <- .C(SK_fcolonel,
-                kerncode=as.integer(kerncode),
-                nx = as.integer(nx),
-                x = as.double(xscal),
-                w = as.double(weights),
-                nr = as.integer(nr),
-                r = as.double(rscal),
-                f = as.double(numeric(nr)),
-                errcode = as.integer(0),
-                PACKAGE="spatstat.univar")
-      fslow <- res$f
-      if(DEBUG) {
-        ## Try older, slightly slower implementation
-        res2 <- .C(SK_colonel,
+      if(even) {
+        ## r is evenly-spaced: use faster C code
+        resE <- .C(SK_fcolonel,
                    kerncode=as.integer(kerncode),
                    nx = as.integer(nx),
                    x = as.double(xscal),
@@ -251,10 +260,30 @@ densityBC <- function(x, kernel="epanechnikov", bw=NULL,
                    f = as.double(numeric(nr)),
                    errcode = as.integer(0),
                    PACKAGE="spatstat.univar")
-        fslow2 <- res2$f
-        splat("\tCalling C functions 'colonel' and 'fcolonel';")
-        splat("\t\tdiscrepancy range", prange(range(fslow - fslow2)))
+        checkCerror(resE)
+        fEven <- resE$f
       }
+      if(!even || DEBUG) {
+        ## Either r is not evenly-spaced, or debugging.
+        ## Slightly slower C code for arbitrary r sequence
+        resU <- .C(SK_colonel,
+                   kerncode=as.integer(kerncode),
+                   nx = as.integer(nx),
+                   x = as.double(xscal),
+                   w = as.double(weights),
+                   nr = as.integer(nr),
+                   r = as.double(rscal),
+                   f = as.double(numeric(nr)),
+                   errcode = as.integer(0),
+                   PACKAGE="spatstat.univar")
+        checkCerror(resU)
+        fUneven <- resU$f
+      }
+      if(even && DEBUG) {
+        splat("\tCalling C functions 'colonel' and 'fcolonel';")
+        splat("\t\tdiscrepancy range", prange(range(fUneven - fEven)))
+      }
+      fslow <- if(even) fEven else fUneven
     } else {
       ## boundary kernel
       nu0 <- kernel.moment(0, rscal, ker)
@@ -276,25 +305,9 @@ densityBC <- function(x, kernel="epanechnikov", bw=NULL,
         nn <- nx
       }
       ## go
-      res <- .C(SK_fbcolonel,
-                kerncode=as.integer(kerncode),
-                nx = as.integer(nn),
-                x = as.double(xx),
-                w = as.double(ww),
-                nr = as.integer(nr),
-                r = as.double(rscal),
-                nu0 = as.double(nu0),
-                nu1 = as.double(nu1),
-                nu2 = as.double(nu2),
-                a = as.double(numeric(nr)),
-                b = as.double(numeric(nr)),
-                f = as.double(numeric(nr)),
-                errcode = as.integer(0),
-                PACKAGE="spatstat.univar")
-      fslow <- res$f
-      if(DEBUG) {
-        ## Try older, slightly slower implementation
-        res2 <- .C(SK_bcolonel,
+      if(even) {
+        ## evenly-spaced r sequence: faster C code
+        resE <- .C(SK_fbcolonel,
                    kerncode=as.integer(kerncode),
                    nx = as.integer(nn),
                    x = as.double(xx),
@@ -309,21 +322,36 @@ densityBC <- function(x, kernel="epanechnikov", bw=NULL,
                    f = as.double(numeric(nr)),
                    errcode = as.integer(0),
                    PACKAGE="spatstat.univar")
-        fslow2 <- res2$f
-        splat("\tCalling C functions 'bcolonel' and 'fbcolonel';")
-        splat("\t\tdiscrepancy range", prange(range(fslow - fslow2)))
+        checkCerror(resE)
+        fEven <- resE$f
       }
+      if(!even || DEBUG) {
+        ## older, slightly slower implementation for arbitrary r sequence
+        resU <- .C(SK_bcolonel,
+                   kerncode=as.integer(kerncode),
+                   nx = as.integer(nn),
+                   x = as.double(xx),
+                   w = as.double(ww),
+                   nr = as.integer(nr),
+                   r = as.double(rscal),
+                   nu0 = as.double(nu0),
+                   nu1 = as.double(nu1),
+                   nu2 = as.double(nu2),
+                   a = as.double(numeric(nr)),
+                   b = as.double(numeric(nr)),
+                   f = as.double(numeric(nr)),
+                   errcode = as.integer(0),
+                   PACKAGE="spatstat.univar")
+        checkCerror(resU)
+        fUneven <- resU$f
+      }
+      if(even && DEBUG) {
+        splat("\tCalling C functions 'bcolonel' and 'fbcolonel';")
+        splat("\t\tdiscrepancy range", prange(range(fUneven - fEven)))
+      }
+      fslow <- if(even) fEven else fUneven
     }
 
-    ## check for errors
-    if(res$errcode != 0) {
-      ## error codes are defined in src/interfacecodes.h
-      whinge <- switch(res$errcode,
-                       "illegal length of vector",
-                       "unrecognised kernel",
-                       "unknown error code")
-      stop(paste("Internal error in C function call:", whinge))
-    }
   }
 
   ## combine contributions
@@ -339,12 +367,11 @@ densityBC <- function(x, kernel="epanechnikov", bw=NULL,
   ## correct density estimates
 
   if(zerocor == "convolution") {
-    r.is.small <- (rscal <= thresh)
-    if(any(r.is.small)) {
-        mass <- pkernel(-rscal[r.is.small], ker, sd=1/cker, lower.tail=FALSE)
-        f[r.is.small] <- ifelse(f[r.is.small] <= 0, 0,
-                                f[r.is.small] / mass)
-      }
+    if(rscalrange[1L] <= thresh) {
+      r.is.small <- (rscal <= thresh)
+      mass <- pkernel(-rscal[r.is.small], ker, sd=1/cker, lower.tail=FALSE)
+      f[r.is.small] <- pmax(0, f[r.is.small] / mass)
+    }
   }
 
   ## wrap up
@@ -358,3 +385,19 @@ densityBC <- function(x, kernel="epanechnikov", bw=NULL,
   }
   return(result)
 }
+
+
+## check for error codes
+checkCerror <- function(object) {
+  ecode <- object$errcode
+  if(ecode != 0) {
+    ## error codes are defined in src/interfacecodes.h
+    whinge <- switch(ecode,
+                     "illegal length of vector",
+                     "unrecognised kernel",
+                     "unknown error code")
+    stop(paste("Internal error in C function call:", whinge))
+  }
+  return(invisible(TRUE))
+}
+
