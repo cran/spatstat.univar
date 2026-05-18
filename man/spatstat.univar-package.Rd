@@ -41,8 +41,10 @@
       function, quantiles, random generation, moments and partial
       moments of the standard smoothing kernels
     }
-    \item{heat kernel:}{
-      calculation of the one-dimensional heat kernel in an interval
+    \item{special distributions:}{
+      including calculation of
+      the one-dimensional heat kernel in an interval,
+      and the distribution of a weighted sum of chi-squared variables
     }
     \item{integration:}{
       Numerical integration including Stieltjes integrals
@@ -183,16 +185,20 @@
     evaluate the kernel with boundary correction
   }
 
-  \bold{Heat kernels}
+  \bold{Special distributions}
 
-  The heat kernel in an interval can be calculated.
+  Support is provided for some special probability distributions:
 
   \tabular{ll}{  
     \code{\link{hotrod}}
     \tab
-    calculate the heat kernel in an interval
+    heat kernel in a one-dimensional interval
+    \cr
+    \code{\link{dsocs}}
+    \tab
+    distribution of a weighted sum of chi-squared variables
   }
-
+  
   \bold{Integration}
 
   A few facilities are provided for calculating integrals
