@@ -13,7 +13,7 @@
       adjust = 1,
       weights = rep(1, length(x))/length(x), from, to = max(x), n = 256,
       zerocor = c("none", "weighted", "convolution", "reflection",
-                  "bdrykern", "JonesFoster"),
+                  "bdrykern", "JonesFoster", "stableJF"),
       fast=FALSE, xout=NULL,
       internal=list())
 }
@@ -64,11 +64,12 @@
     Number of \eqn{r} values for which density should be computed.
   }
   \item{zerocor}{
-    String (partially matched) specifying a correction for the boundary effect
-    bias at \eqn{r=0} when estimating a density on the positive
-    half line. Possible values are
+    Character string (partially matched) specifying a correction
+    for the boundary effect bias at \eqn{x=0} when estimating
+    a density on the positive half line. Possible values are
     \code{"none"}, \code{"weighted"}, \code{"convolution"},
-    \code{"reflection"}, \code{"bdrykern"} and \code{"JonesFoster"}. 
+    \code{"reflection"}, \code{"bdrykern"}, \code{"JonesFoster"}
+    and \code{"stableJF"}. Default is to perform no boundary correction.
   }
   \item{fast}{
     Logical value specifying whether to perform the calculation rapidly
@@ -117,7 +118,8 @@
   and \eqn{\kappa}{kappa} is the kernel, a probability density on the
   real line. 
 
-  If \code{zerocor} is given, the probability density is assumed to be
+  If \code{zerocor} is given and \code{zerocor != "none"},
+  the probability density is assumed to be
   confined to the positive half-line; the numerical values in \code{x}
   must all be non-negative; and a boundary correction is
   applied to compensate for bias arising due to truncation at the origin:
@@ -141,7 +143,7 @@
     }
     \item{\code{zerocor="convolution"}:}{
       The estimate of the density \eqn{f(x)} is
-      weighted by the factor \eqn{1/m(x)} where \eqn{m(r) = 1 - F(-x)}
+      weighted by the factor \eqn{1/m(x)} where \eqn{m(x) = 1 - F(-x)}
       is given above.
       The corrected estimate is
       \deqn{
@@ -211,15 +213,34 @@
       \deqn{
 	\widehat f_{JF}(x) =
 	\widehat f_C(x)
-	\exp\left( \frac{\widehat f_B(x)}{\widehat f_C(r)} - 1 \right)
+	\exp\left( \frac{\widehat f_B(x)}{\widehat f_C(x)} - 1 \right)
       }{
 	fJF(x) = fC(x) exp(fB(x)/fC(x) - 1)
       }
-      where \eqn{\widehat f_C(r)}{fC(r)} is the convolution estimator
-      and \eqn{\widehat f_B(r)}{fB(r)} is the linear boundary kernel estimator.
+      where \eqn{\widehat f_C(x)}{fC(x)} is the convolution estimator
+      and \eqn{\widehat f_B(x)}{fB(x)} is the linear boundary kernel estimator.
       This ensures that the estimate is always nonnegative
       and retains the asymptotic optimality of the linear boundary
       kernel.
+      Computation time for this estimate
+      is greater than for all the options above.
+    }
+    \item{\code{zerocor="stableJF"}:}{
+      In order to reduce numerical instability in small samples,
+      the Jones-Foster estimate is modified as proposed by Adrian
+      Baddeley:
+      \deqn{
+	\widehat f_{SJF}(x) = 
+	\left\{
+	\begin{array}{ll}
+	\widehat f_B(x) & \mbox{if } \widehat f_B(x) > f_C(x) \cr
+	\widehat f_{JF}(x) & \mbox{otherwise}
+	\end{array}
+	\right.
+      }{
+	fSJF(x) = fB(x) if fB(x) > fC(x),
+	fSJF(x) = fJF(x) otherwise
+      }
       Computation time for this estimate
       is greater than for all the options above.
     }
